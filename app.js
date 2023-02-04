@@ -7,6 +7,9 @@ var logger = require('morgan');
 // connection to the DB
 require('./lib/connectMongoose');
 
+// connection to API
+const apiRouter = require('./routes/api/posts')
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -22,8 +25,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// API routes
+app.use('/api/posts', apiRouter);
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
