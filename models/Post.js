@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 
-const contentSchema = mongoose.Schema({
+const postSchema = mongoose.Schema({
     id: { type: Number, unique: true },
     publisherId: { type: Number, unique: true },
     author: {
@@ -23,12 +23,12 @@ const contentSchema = mongoose.Schema({
 
 }, { timestamps: true });
 
-contentSchema.statics.getPosts = function(filter) {
-  const query = Content.find({filter})
+postSchema.statics.getPosts = function(filter) {
+  const query = Post.find({filter})
   return query.exec()
 }
 
 
-const Content = mongoose.model('Content', contentSchema);
+const Post = mongoose.model('Post', postSchema);
 
-module.exports = Content
+module.exports = Post
