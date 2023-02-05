@@ -4,7 +4,7 @@ const express = require('express');
 const Content = require('../../models/Content');
 const router = express.Router();
 
-// GET api/posts
+// GET api/
 router.get('/', async function (req, res, next) {
     try {
         const posts = await Content.getPosts();
