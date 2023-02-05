@@ -23,6 +23,12 @@ const contentSchema = mongoose.Schema({
 
 }, { timestamps: true });
 
+contentSchema.statics.getPosts = function(filter) {
+  const query = Content.find({filter})
+  return query.exec()
+}
+
+
 const Content = mongoose.model('Content', contentSchema);
 
 module.exports = Content
