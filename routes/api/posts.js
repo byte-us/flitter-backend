@@ -3,7 +3,6 @@
 const express = require('express');
 const Content = require('../../models/Content');
 const router = express.Router();
-// const postsContent = require('../../models/postContent');
 
 // GET api/posts
 router.get('/', async function (req, res, next) {
