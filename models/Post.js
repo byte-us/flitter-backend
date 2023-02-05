@@ -3,8 +3,6 @@
 const mongoose = require('mongoose');
 
 const postSchema = mongoose.Schema({
-    id: { type: Number, unique: true },
-    publisherId: { type: Number, unique: true },
     author: {
         type: 'ObjectId',
         ref: 'User',
@@ -12,8 +10,7 @@ const postSchema = mongoose.Schema({
       },
     message: { type: String, require: true, min: 1, max: 140 },
     image: { type: String },
-    publishDate: { type: Date },
-    timestamp: { type: String },
+    time : { type : Date, default: Date.now },
     kudos: [
         {
           type: 'ObjectId',
