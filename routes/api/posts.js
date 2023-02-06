@@ -1,13 +1,13 @@
 'use strict';
 
 const express = require('express');
-const Content = require('../../models/Content');
+const Post = require('../../models/Post')
 const router = express.Router();
 
 // GET api/
 router.get('/', async function (req, res, next) {
     try {
-        const posts = await Content.getPosts();
+        const posts = await Post.getPosts();
         res.json({results : posts});
     } catch(err) {
         next(err)
@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
 router.post('/posts',async (req, res,next) => {
     try {
         const postBody = req.body;
-        const newPost = new Content(postBody);
+        const newPost = new Post(postBody);
         const savePost = await newPost.save()
         res.json( { posts : savePost })
     } catch (err) {

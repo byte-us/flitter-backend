@@ -2,9 +2,7 @@
 
 const mongoose = require('mongoose');
 
-const contentSchema = mongoose.Schema({
-    id: { type: Number, unique: true },
-    publisherId: { type: Number, unique: true },
+const postSchema = mongoose.Schema({
     author: {
         type: 'ObjectId',
         ref: 'User',
@@ -12,8 +10,7 @@ const contentSchema = mongoose.Schema({
       },
     message: { type: String, require: true, min: 1, max: 140 },
     image: { type: String },
-    publishDate: { type: Date },
-    timestamp: { type: String },
+    time : { type : Date, default: Date.now },
     kudos: [
         {
           type: 'ObjectId',
@@ -23,12 +20,12 @@ const contentSchema = mongoose.Schema({
 
 }, { timestamps: true });
 
-contentSchema.statics.getPosts = function(filter) {
-  const query = Content.find({filter})
+postSchema.statics.getPosts = function(filter) {
+  const query = Post.find({filter})
   return query.exec()
 }
 
 
-const Content = mongoose.model('Content', contentSchema);
+const Post = mongoose.model('Post', postSchema);
 
-module.exports = Content
+module.exports = Post

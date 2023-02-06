@@ -3,11 +3,10 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    id: { type: Number, unique: true},
-    name: { type: String, require: true, unique: false},
-    username: { type: String, unique: true, require: false},
+    name: { type: String, require: true },
+    username: { type: String, unique: true },
     email: { type: String, unique: true },
-    password: { type: String, unique: true },
+    password: { type: String },
     followers: [{
             type: 'ObjectId',
             ref: 'User'
@@ -16,10 +15,10 @@ const userSchema = new mongoose.Schema({
         type: 'ObjectId',
         ref: 'User'
       }],
-    content: [
+    posts: [
       {
         type: 'ObjectId',
-        ref: 'Content'
+        ref: 'Posts'
       }
     ]
 }, { timestamps: true });
