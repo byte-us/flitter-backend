@@ -9,11 +9,13 @@ require('./lib/connectMongoose');
 
 // connection to API
 const apiRouter = require('./routes/api/posts')
+const loginRoute = require('./routes/api/login');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+const bcrypt = require('bcrypt')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API routes
 app.use('/api/posts', apiRouter);
+app.use("/api/login", loginRoute);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
