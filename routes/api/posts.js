@@ -8,7 +8,7 @@ const User = require('../../models/User')
 
 
 // GET api/posts
-/* gets all the posts */
+// gets all the posts
 router.get('/', async function (req, res, next) {
     try {
         const posts = await Post.getPosts();
@@ -33,14 +33,12 @@ router.get('/:id', async function (req, res, next) {
 
 
 // POST api/posts
-/* creates a new post */
-router.post('/newpost',async (req, res,next) => {
+router.post('/',async (req, res,next) => {
     try {
-
-        const postBody = req.body        
-        const newPost = new Post(postBody);
-        const savedPost = await newPost.save()
-        res.json( { posts : savedPost })
+        const postData = req.body;
+        const newPost = new Post(postData);
+        const savePost = await newPost.save()
+        res.json( { posts : savePost })
     } catch (err) {
         next(err)
     }

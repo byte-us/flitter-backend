@@ -12,7 +12,6 @@ const postSchema = mongoose.Schema({
       },
     message: { type: String, require: true, min: 1, max: 140 },
     image: { type: String },
-    time: { type: Date, default: Date.now },
     kudos: [
         {
           type: 'ObjectId',

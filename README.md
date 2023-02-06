@@ -27,7 +27,7 @@ MONGODB="mongodb://172.23.32.1:27017/flitterApp" npm run dev
 
 Posts list:
 
-GET /api/
+GET /api/posts
 
 {
   "results": [
