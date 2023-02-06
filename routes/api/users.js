@@ -1,0 +1,63 @@
+'use strict';
+
+const express = require('express');
+const router = express.Router();
+const User = require('../../models/User')
+
+
+// GET api/users
+router.get('/', async function (req, res, next) {
+    try {
+        const users = await User.getUsers();
+        res.json({results : users});
+    } catch(error) {
+        next(error)
+    }   
+})
+
+
+// GET api/users/:id
+/* gets 1 user with its id */
+router.get('/:id', async function (req, res, next) {
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id);
+        res.json({results : user});
+    } catch(error) {
+        next(error)
+    }   
+})
+
+
+// POST api/users
+/* creates a new user */
+router.post('/newuser',async (req, res,next) => {
+    try {
+        const usersInfo = req.body;
+        const newUser = new User(usersInfo);
+        const savedUser = await newUser.save();
+        res.json( { users : savedUser })
+    } catch (error) {
+        next(error)
+    }
+})
+
+
+//DELETE api/users/:id
+/* deletes 1 user */
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id);
+        if(!user) {
+            return next(new Error(404))
+        }
+        await User.deleteOne({_id: id});
+        res.json();
+        
+    } catch (error) {
+        next(error)
+    }
+})
+
+module.exports = router;
