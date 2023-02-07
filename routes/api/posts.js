@@ -2,6 +2,7 @@
 
 const express = require('express');
 const Post = require('../../models/Post');
+
 const router = express.Router();
 const User = require('../../models/User')
 
@@ -35,6 +36,7 @@ router.get('/:id', async function (req, res, next) {
 /* creates a new post */
 router.post('/newpost',async (req, res,next) => {
     try {
+
         const postBody = req.body        
         const newPost = new Post(postBody);
         const savedPost = await newPost.save()

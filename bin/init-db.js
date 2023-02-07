@@ -1,3 +1,4 @@
+'use strict'
 // Initialize db with some data
 
 const { default: mongoose, Mongoose } = require('mongoose');
