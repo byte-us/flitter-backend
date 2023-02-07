@@ -8,7 +8,8 @@ const postSchema = mongoose.Schema({
     author: {
         type: 'ObjectId',
         ref: 'User',
-        required: true
+        required: true,
+        index: true
       },
     message: { type: String, require: true, min: 1, max: 140 },
     image: { type: String },

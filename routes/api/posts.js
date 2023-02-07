@@ -1,8 +1,7 @@
 'use strict';
 
 const express = require('express');
-const Post = require('../../models/Post');
-
+const Post = require('../../models/Post')
 const router = express.Router();
 const User = require('../../models/User')
 
@@ -14,7 +13,7 @@ router.get('/', async function (req, res, next) {
         const posts = await Post.getPosts();
         res.json({results : posts});
     } catch(err) {
-        next(err)
+        next(err);
     }   
 })
 
@@ -28,7 +27,20 @@ router.get('/:id', async function (req, res, next) {
         res.json({results : post});
     } catch(err) {
         next(err)
-    }   
+    }  
+})
+
+// GET api/posts/{id}
+// Returns all the posts of a user
+router.get('/:author', async (req, res, next) => {
+    try {
+        const userId = req.params.author;
+        console.log(userId)
+        const userPosts = await Post.find({author: userId});
+        res.json({result: userPosts})
+    } catch (err) {
+        next(err);
+    }
 })
 
 

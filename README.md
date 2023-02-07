@@ -22,10 +22,10 @@ npm run start
 ```sh
 MONGODB="mongodb://172.23.32.1:27017/flitterApp" npm run dev
 ```
-## API Documentation
+# API Documentation
 
 
-Posts list:
+## List of all the posts:
 
 GET /api/posts
 
@@ -38,8 +38,28 @@ GET /api/posts
       "kudos": [
         "63e08ed72dbe1d2e63c258d6"
       ],
-      "time": "2023-02-06T05:23:35.638Z",
       "__v": 0,
       "createdAt": "2023-02-06T05:23:35.641Z",
       "updatedAt": "2023-02-06T05:23:35.641Z"
     }
+  ]
+}
+
+## List all the posts of a user:
+GET /api/posts/{author}:
+
+example /api/posts/63e1665b5218a5bfb27dfd63
+
+{
+  "result": [
+    {
+      "_id": "63e1665b5218a5bfb27dfd68",
+      "author": "63e1665b5218a5bfb27dfd63",
+      "message": "And now it's the second!",
+      "kudos": [
+        "63e1665b5218a5bfb27dfd63",
+        "63e1665b5218a5bfb27dfd64",
+        "63e1665b5218a5bfb27dfd62"
+    }
+  ]
+}
