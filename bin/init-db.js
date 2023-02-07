@@ -94,12 +94,12 @@ async function initPosts(insertedUsers) {
 
 async function askToRemoveDB(text) {
     return new Promise((resolve, reject) => {
-        const interface = readline.createInterface({
+        const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
 
-        interface.question(text, answer => {
+        rl.question(text, answer => {
             if (answer.toLowerCase() === 'y') {
                 resolve(true);
                 return;
