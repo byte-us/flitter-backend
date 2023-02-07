@@ -8,7 +8,8 @@ var logger = require('morgan');
 require('./lib/connectMongoose');
 
 // connection to API
-const apiRouter = require('./routes/api/posts')
+const postsApi = require('./routes/api/posts')
+const usersApi = require('./routes/api/users')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -26,7 +27,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API routes
-app.use('/api', apiRouter);
+app.use('/api/posts', postsApi);
+app.use('/api/users', usersApi);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

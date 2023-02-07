@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 
+
 const userSchema = new mongoose.Schema({
     name: { type: String, require: true },
     username: { type: String, unique: true },
@@ -18,10 +19,20 @@ const userSchema = new mongoose.Schema({
     posts: [
       {
         type: 'ObjectId',
-        ref: 'Posts'
+        ref: 'Post'
       }
     ]
 }, { timestamps: true });
+
+
+userSchema.statics.getUsers = function(filter) {
+  const query = User.find({filter})
+  query.followers = User.findById(User._id)
+  query.following = User.findById(User._id)
+  query.populate('followers','username')
+  query.populate('following','username')
+  return query.exec()
+}
 
 
 const User = mongoose.model('User', userSchema);

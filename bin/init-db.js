@@ -1,3 +1,4 @@
+'use strict'
 // Initialize db with some data
 
 const { default: mongoose, Mongoose } = require('mongoose');
@@ -34,7 +35,7 @@ async function initUsers() {
             username: 'ana123',
             email: 'ana@gmail.com',
             password: 'ana123',
-            folowers: [],
+            followers: [],
             following: [],
             posts: []
         },{
@@ -42,7 +43,7 @@ async function initUsers() {
             username: 'lola',
             email: 'lola@gmail.com',
             password: 'lola123',
-            folowers: [],
+            followers: [],
             following: [],
             posts: []
         },{
@@ -50,7 +51,7 @@ async function initUsers() {
             username: 'maga',
             email: 'maga@gmail.com',
             password: 'maga123',
-            folowers: [],
+            followers: [],
             following: [],
             posts: []
         }
