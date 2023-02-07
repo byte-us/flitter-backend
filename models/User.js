@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 
+
 const userSchema = new mongoose.Schema({
     name: { type: String, require: true },
     username: { type: String, unique: true },
@@ -26,6 +27,10 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.getUsers = function(filter) {
   const query = User.find({filter})
+  query.followers = User.findById(User._id)
+  query.following = User.findById(User._id)
+  query.populate('followers','username')
+  query.populate('following','username')
   return query.exec()
 }
 
