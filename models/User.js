@@ -1,7 +1,8 @@
 'use strict'
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
+const {Schema} = mongoose;
 
 const saltRounds = 10;
 
@@ -28,34 +29,15 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-//function to save the password
-userSchema.pre('save', function(next) {
-  if(this.isNew || this.isModified('password')) {
-    const document = this;
-
-    bcrypt.hash(document.password, saltRounds, (err, hashedPassword) => {
-      if(err) {
-        next(err);
-      } else {
-        document.password = hashedPassword;
-        next();
-      }
-    })
-  } else {
-    next();
-  }
-});
+userSchema.methods.encryptPassword = function(password) {
+ return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+};
 
 //verification password correct
-userSchema.methods.isCorrectPassword = function(password, callback) {
-  bcrypt.compare(password, this.password, function(err, same){
-    if(err) {
-      callback(err);
-    } else {
-      callback(err, same);
-    }
-  });
-}
+userSchema.methods.comparePassword = function(password) {
+  return bcrypt.compareSync(password, this.password);
+ };
+ 
 
 const User = mongoose.model('User', userSchema);
 

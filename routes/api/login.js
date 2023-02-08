@@ -2,32 +2,51 @@
 
 const express = require('express');
 const User = require('../../models/User');
-const bcrypt = require("bcrypt");
+const { Router } = require('express');
 const router = express.Router();
+const passport = require('passport')
 
-router.get("/login", async (req, res) => {
-    const {username, email, password } = req.body;
-    
-    // Search for a user with the specified email
-    User.findOne({ email }, (err, user) => {
-      if (err || !user) {
-        return res.status(400).json({
-          error: "User not found with that email",
-        });
-      }
-  
-      // Compare passwords
-      bcrypt.compare(password, user.password, username, (err, isMatch) => {
-        if (err || !isMatch) {
-          return res.status(401).json({
-            error: "Invalid password",
-          });
-        }
-  
-        res.json({ message: "Login successful" });
-      });
-    });
-  });
-  
+
+// GET /register
+router.get('/register', (req, res, next) => {
+  res.render('register');
+
+})
+
+// POST /register
+router.post('/register', passport.authenticate('local-register', {
+  successRedirect: '/',
+  failureRedirect: '/register',
+  passReqToCallback: true
+})) 
+
+// GET /login
+router.get('/login', (req, res, next) => {
+  res.render('login')
+});
+
+// POST /login
+router.post('/login', passport.authenticate('local-login', {
+  successRedirect: '/',
+  failureRedirect: '/login',
+  passReqToCallback: true
+}));
+
+
+router.get('/logout', (req, res, send) => {
+  req.logOut();
+  res.redirect('/login');
+});
+
+/*
+function isAuthenticated(req, res, next) {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+}
+*/
+
+
   module.exports = router;
   
