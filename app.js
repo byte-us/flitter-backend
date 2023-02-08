@@ -1,5 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -14,8 +15,8 @@ require('./lib/connectMongoose');
 require('./passport/local-auth')
 
 // connection to API
-const apiRouter = require('./routes/api/posts')
-
+const usersApi = require('./routes/api/users')
+const postsRouter = require('./routes/api/posts')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -25,6 +26,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -47,8 +49,10 @@ app.use((req, res, next)=> {
 
 // API routes
 app.use('/api/posts', apiRouter);
-app.use('/', require ('./routes/api/login'));
+app.use('/api/posts', postsRouter);
 
+app.use('/api/users', usersApi);
+app.use('/', require ('./routes/api/login'));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

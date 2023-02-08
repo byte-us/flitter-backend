@@ -6,12 +6,14 @@ const {Schema} = mongoose;
 
 const saltRounds = 10;
 
+
 const userSchema = new mongoose.Schema({
-    id: { type: Number, unique: true},
-    name: { type: String, require: true, unique: false},
-    username: { type: String, unique: true, require: true},
+
+    name: { type: String, require: true },
+    username: { type: String, unique: true },
     email: { type: String, unique: true },
-    password: { type: String, require: true, unique: false },
+    password: { type: String, require: true },
+
     followers: [{
             type: 'ObjectId',
             ref: 'User'
@@ -20,13 +22,14 @@ const userSchema = new mongoose.Schema({
         type: 'ObjectId',
         ref: 'User'
       }],
-    content: [
+    posts: [
       {
         type: 'ObjectId',
-        ref: 'Content'
+        ref: 'Post'
       }
     ]
 }, { timestamps: true });
+
 
 
 userSchema.methods.encryptPassword = function(password) {
@@ -37,7 +40,17 @@ userSchema.methods.encryptPassword = function(password) {
 userSchema.methods.comparePassword = function(password) {
   return bcrypt.compareSync(password, this.password);
  };
- 
+
+
+userSchema.statics.getUsers = function(filter) {
+  const query = User.find({filter})
+  query.followers = User.findById(User._id)
+  query.following = User.findById(User._id)
+  query.populate('followers','username')
+  query.populate('following','username')
+  return query.exec()
+}
+
 
 const User = mongoose.model('User', userSchema);
 
