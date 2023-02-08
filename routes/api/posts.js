@@ -1,20 +1,20 @@
 'use strict';
 
 const express = require('express');
-const Post = require('../../models/Post');
 
-const router = express.Router();
 const User = require('../../models/User')
+const Post = require('../../models/Post')
+const router = express.Router();
 
 
 // GET api/posts
-/* gets all the posts */
+// gets all the posts
 router.get('/', async function (req, res, next) {
     try {
         const posts = await Post.getPosts();
         res.json({results : posts});
     } catch(err) {
-        next(err)
+        next(err);
     }   
 })
 
@@ -28,19 +28,47 @@ router.get('/:id', async function (req, res, next) {
         res.json({results : post});
     } catch(err) {
         next(err)
-    }   
+    }  
+})
+
+
+// GET api//posts/user/{id}
+// Returns all the posts of a user from newest to oldest
+router.get('/user/:author', async (req, res, next) => {
+
+
+    try {
+        const userId = req.params.author;
+
+        // paginación
+        const page = req.query.page || 1;
+        // default number of postr per page 10
+        const limit = req.query.limit || 10;
+        const skip = (page-1)*limit;
+        const sort = req.query.sort || "-author";
+
+        const filter = {author: userId};
+
+
+        // if userId is a ObjectID
+        if(!userId.match(/^[a-fA-F0-9]{24}$/)) next() 
+
+        const userPosts = await Post.getUserPosts(filter, sort, skip, limit);
+        res.json({page, limit, result: userPosts})
+
+    } catch (err) {
+        next(err);
+    }
 })
 
 
 // POST api/posts
-/* creates a new post */
-router.post('/newpost',async (req, res,next) => {
+router.post('/',async (req, res,next) => {
     try {
-
-        const postBody = req.body        
-        const newPost = new Post(postBody);
-        const savedPost = await newPost.save()
-        res.json( { posts : savedPost })
+        const postData = req.body;
+        const newPost = new Post(postData);
+        const savePost = await newPost.save()
+        res.json( { posts : savePost })
     } catch (err) {
         next(err)
     }
