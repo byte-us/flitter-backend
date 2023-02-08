@@ -1,15 +1,10 @@
 'use strict';
 
 const express = require('express');
-<<<<<<< HEAD
 
 const User = require('../../models/User')
-=======
-const { populate } = require('../../models/User');
->>>>>>> fix: Change /api/posts/{userId} to /api/posts/user/{userId}
 const Post = require('../../models/Post')
 const router = express.Router();
-const User = require('../../models/User')
 
 
 // GET api/posts
@@ -24,7 +19,6 @@ router.get('/', async function (req, res, next) {
 })
 
 
-<<<<<<< HEAD
 // GET api/posts/:id
 /* gets 1 post */
 router.get('/:id', async function (req, res, next) {
@@ -37,10 +31,8 @@ router.get('/:id', async function (req, res, next) {
     }  
 })
 
-// GET api/posts/{id}
-=======
+
 // GET api//posts/user/{id}
->>>>>>> fix: Change /api/posts/{userId} to /api/posts/user/{userId}
 // Returns all the posts of a user from newest to oldest
 router.get('/user/:author', async (req, res, next) => {
 
