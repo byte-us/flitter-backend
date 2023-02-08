@@ -23,13 +23,14 @@ const postSchema = mongoose.Schema({
 }, { timestamps: true });
 
 
-postSchema.statics.getPosts = function(filter,skip, limit, sort) {
-  const query = Post.find(filter)
+postSchema.statics.getPosts = function(skip, limit, sort) {
+  const query = Post.find()
   query.populate('author','username')
   query.populate('kudos', 'username')
   query.skip(skip);
   query.limit(limit);
   query.sort(sort);
+
   return query.exec()
 }
 

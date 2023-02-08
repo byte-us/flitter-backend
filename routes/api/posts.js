@@ -1,19 +1,20 @@
 'use strict';
 
 const express = require('express');
-
 const router = express.Router();
+const Post = require('../../models/Post')
 
 
 
-// GET api/posts?skip=2&limit=7&sort=-time
+// GET api/posts?page=2&limit=5&sort=-time
 /* gets all the posts */
 router.get('/', async function (req, res, next) {
     try {
-        const skip = req.query.skip || 0;
+        const page= req.query.page ||1;
         const limit = req.query.limit || 10;
-        const sort = req.query.sort 
-        const posts = await Post.getPosts( skip, limit, sort);
+        const skip = (page-1)*limit;
+        const sort = req.query.sort;
+        const posts = await Post.getPosts(skip, limit, sort);
 
         res.json({ posts});
     } catch(error) {
