@@ -29,7 +29,16 @@ postSchema.statics.getPosts = function() {
   query.kudos = User.findById(User._id)
   query.populate('author','username')
   query.populate('kudos', 'username')
+  return query.exec()
+}
 
+postSchema.statics.getUserPosts = function(filter, sort, skip, limit) {
+  const query = Post.find(filter);
+  query.populate("author")
+  query.populate("kudos")
+  query.sort(sort)
+  query.skip(skip);
+  query.limit(limit);
   return query.exec()
 }
 

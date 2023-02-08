@@ -1,6 +1,8 @@
 'use strict';
 
 const express = require('express');
+
+const User = require('../../models/User')
 const Post = require('../../models/Post')
 const router = express.Router();
 const User = require('../../models/User')
@@ -31,13 +33,30 @@ router.get('/:id', async function (req, res, next) {
 })
 
 // GET api/posts/{id}
-// Returns all the posts of a user
+// Returns all the posts of a user from newest to oldest
 router.get('/:author', async (req, res, next) => {
+
+
     try {
         const userId = req.params.author;
-        console.log(userId)
-        const userPosts = await Post.find({author: userId});
-        res.json({result: userPosts})
+
+        // paginación
+        const page = req.query.page || 1;
+        // default number of postr per page 10
+        const limit = req.query.limit || 10;
+        const skip = (page-1)*limit;
+        const sort = req.query.sort || "-author";
+
+        const filter = {author: userId};
+
+
+        // if userId is a ObjectID
+        if(!userId.match(/^[a-fA-F0-9]{24}$/)){ next }
+
+        //const userPosts = await Post.find({author: userId}).sort({author: -1})
+        const userPosts = await Post.getUserPosts(filter, sort, skip, limit);
+        res.json({page, limit, result: userPosts})
+
     } catch (err) {
         next(err);
     }

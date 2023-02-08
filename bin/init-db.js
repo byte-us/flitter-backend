@@ -22,6 +22,7 @@ async function main() {
     const insertedUsers = await initUsers();
     await initPosts(insertedUsers);
     connection.close();
+    process.exit();
 }
 
 
@@ -60,6 +61,7 @@ async function initUsers() {
         process.exit()
     });
 
+
     console.log(`Created ${insertedUsers.length} users`)
     return insertedUsers;
 }
@@ -88,9 +90,8 @@ async function initPosts(insertedUsers) {
         });
 
     console.log(`Created ${insertedUsers.length} posts`)
-    process.exit();
 }
-
+    
 
 async function askToRemoveDB(text) {
     return new Promise((resolve, reject) => {
