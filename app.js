@@ -4,9 +4,15 @@ var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const passport = require('passport')
+const session = require('express-session')
+const flash = require('connect-flash')
 
 // connection to the DB
 require('./lib/connectMongoose');
+
+// require passport
+require('./passport/local-auth')
 
 // connection to API
 const usersApi = require('./routes/api/users')
@@ -26,10 +32,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'mysecretsession',
+  resave: false,
+  saveUninitialized: false
+}))
+
+app.use(flash())
+app.use(passport.initialize())
+app.use(passport.session())
+app.use((req, res, next)=> {
+  app.locals.registerMessage = req.flash('registerMessage')
+  app.locals.loginMessage = req.flash('loginMessage')
+  next();
+});
 
 // API routes
-app.use('/api/users', usersApi);
+app.use('/api/posts', apiRouter);
 app.use('/api/posts', postsRouter);
+
+app.use('/api/users', usersApi);
+app.use('/', require ('./routes/api/login'));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

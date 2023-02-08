@@ -1,13 +1,19 @@
 'use strict'
 
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt-nodejs');
+const {Schema} = mongoose;
+
+const saltRounds = 10;
 
 
 const userSchema = new mongoose.Schema({
+
     name: { type: String, require: true },
     username: { type: String, unique: true },
     email: { type: String, unique: true },
     password: { type: String, require: true },
+
     followers: [{
             type: 'ObjectId',
             ref: 'User'
@@ -23,6 +29,17 @@ const userSchema = new mongoose.Schema({
       }
     ]
 }, { timestamps: true });
+
+
+
+userSchema.methods.encryptPassword = function(password) {
+ return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+};
+
+//verification password correct
+userSchema.methods.comparePassword = function(password) {
+  return bcrypt.compareSync(password, this.password);
+ };
 
 
 userSchema.statics.getUsers = function(filter) {
