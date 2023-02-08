@@ -34,8 +34,8 @@ postSchema.statics.getPosts = function() {
 
 postSchema.statics.getUserPosts = function(filter, sort, skip, limit) {
   const query = Post.find(filter);
-  query.populate("author")
-  query.populate("kudos")
+  query.populate('author', 'username')
+  query.populate('kudos', 'username')
   query.sort(sort)
   query.skip(skip);
   query.limit(limit);

@@ -63,14 +63,14 @@ Output example:
 POST /api/posts
 
 ## List all the posts of a user:
-GET /api/posts/{userId}:
+GET /api/posts/user/{userId}:
 
-example /api/posts/63e1665b5218a5bfb27dfd63
+example /api/posts/user/63e1665b5218a5bfb27dfd63
 
 ## Page:
 Page number. Default is 1
-example:/api/posts/{userId}?page=2
+example:/api/posts/user/{userId}?page=2
 
 ## Limit:
 Limit posts of a user:. Default is 10
-example:/api/posts/{userId}?limit=5
+example:/api/posts/user/{userId}?limit=5
