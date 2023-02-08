@@ -4,30 +4,33 @@ const express = require('express');
 const Post = require('../../models/Post');
 
 const router = express.Router();
-const User = require('../../models/User')
 
 
-// GET api/posts
+// GET api/posts?skip=2&limit=7&sort=-time
 /* gets all the posts */
 router.get('/', async function (req, res, next) {
     try {
-        const posts = await Post.getPosts();
-        res.json({results : posts});
-    } catch(err) {
-        next(err)
+        const skip = req.query.skip || 0;
+        const limit = req.query.limit || 10;
+        const sort = req.query.sort 
+        const posts = await Post.getPosts( skip, limit, sort);
+
+        res.json({ posts});
+    } catch(error) {
+        next(error)
     }   
 })
 
 
 // GET api/posts/:id
 /* gets 1 post */
-router.get('/:id', async function (req, res, next) {
+router.get('/:id', async (req, res, next)=> {
     try {
         const id = req.params.id;
         const post = await Post.findById(id);
         res.json({results : post});
-    } catch(err) {
-        next(err)
+    } catch(error) {
+        next(error)
     }   
 })
 
@@ -41,8 +44,8 @@ router.post('/newpost',async (req, res,next) => {
         const newPost = new Post(postBody);
         const savedPost = await newPost.save()
         res.json( { posts : savedPost })
-    } catch (err) {
-        next(err)
+    } catch (error) {
+        next(error)
     }
 })
 
