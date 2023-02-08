@@ -8,11 +8,11 @@ const postSchema = mongoose.Schema({
     author: {
         type: 'ObjectId',
         ref: 'User',
-        required: true
+        required: true,
+        index: true
       },
     message: { type: String, require: true, min: 1, max: 140 },
     image: { type: String },
-    time: { type: Date, default: Date.now },
     kudos: [
         {
           type: 'ObjectId',
@@ -23,8 +23,8 @@ const postSchema = mongoose.Schema({
 }, { timestamps: true });
 
 
-postSchema.statics.getPosts = function(skip, limit, sort) {
-  const query = Post.find()
+postSchema.statics.getPosts = function(filter,skip, limit, sort) {
+  const query = Post.find(filter)
   query.populate('author','username')
   query.populate('kudos', 'username')
   query.skip(skip);

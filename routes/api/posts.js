@@ -1,9 +1,9 @@
 'use strict';
 
 const express = require('express');
-const Post = require('../../models/Post');
 
 const router = express.Router();
+
 
 
 // GET api/posts?skip=2&limit=7&sort=-time
@@ -31,23 +31,41 @@ router.get('/:id', async (req, res, next)=> {
         res.json({results : post});
     } catch(error) {
         next(error)
-    }   
+    }  
 })
 
 
-// POST api/posts
-/* creates a new post */
-router.post('/newpost',async (req, res,next) => {
-    try {
+// GET api/posts/user/{id}
+// Returns all the posts of a user from newest to oldest
+router.get('/user/:author', async (req, res, next) => {
 
-        const postBody = req.body        
-        const newPost = new Post(postBody);
-        const savedPost = await newPost.save()
-        res.json( { posts : savedPost })
-    } catch (error) {
-        next(error)
+
+    try {
+        const userId = req.params.author;
+
+        // paginación
+        const page = req.query.page || 1;
+        // default number of postr per page 10
+        const limit = req.query.limit || 10;
+        const skip = (page-1)*limit;
+        const sort = req.query.sort || "-author";
+
+        const filter = {author: userId};
+
+
+        // if userId is a ObjectID
+        if(!userId.match(/^[a-fA-F0-9]{24}$/)) next() 
+
+        const userPosts = await Post.getPosts(filter, sort, skip, limit);
+        res.json({page, limit, result: userPosts})
+
+    } catch (err) {
+        next(err);
     }
 })
+
+
+
 
 
 //DELETE api/posts/:id
