@@ -41,3 +41,4 @@ GET /api/posts?page=2
 ## Limit:
 Limit posts of a user:. Default is 10
 GET /api/posts?limit=5
+
