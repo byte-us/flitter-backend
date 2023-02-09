@@ -1,6 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose');
+const { populate } = require('./User');
 const User = require('./User')
 
 
@@ -23,15 +24,14 @@ const postSchema = mongoose.Schema({
 }, { timestamps: true });
 
 
-postSchema.statics.getPosts = function(skip, limit, sort) {
-  const query = Post.find()
-  query.populate('author','username')
-  query.populate('kudos', 'username')
+postSchema.statics.getPosts = function(filter, sort, skip, limit) {
+  const query = Post.find(filter);
+  query.populate('author', 'username');
+  query.populate('kudos', 'username');
+  query.sort(sort);
   query.skip(skip);
   query.limit(limit);
-  query.sort(sort);
-
-  return query.exec()
+  return query.exec();
 }
 
 
