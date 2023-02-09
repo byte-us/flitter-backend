@@ -23,24 +23,17 @@ const postSchema = mongoose.Schema({
 }, { timestamps: true });
 
 
-postSchema.statics.getPosts = function() {
-  const query = Post.find({})
-  query.author = User.findById(User._id)
-  query.kudos = User.findById(User._id)
+postSchema.statics.getPosts = function(skip, limit, sort) {
+  const query = Post.find()
   query.populate('author','username')
   query.populate('kudos', 'username')
+  query.skip(skip);
+  query.limit(limit);
+  query.sort(sort);
+
   return query.exec()
 }
 
-postSchema.statics.getUserPosts = function(filter, sort, skip, limit) {
-  const query = Post.find(filter);
-  query.populate('author', 'username')
-  query.populate('kudos', 'username')
-  query.sort(sort)
-  query.skip(skip);
-  query.limit(limit);
-  return query.exec()
-}
 
 
 const Post = mongoose.model('Post', postSchema);

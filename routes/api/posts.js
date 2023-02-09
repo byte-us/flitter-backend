@@ -1,38 +1,42 @@
 'use strict';
 
 const express = require('express');
-
-const User = require('../../models/User')
-const Post = require('../../models/Post')
 const router = express.Router();
+const Post = require('../../models/Post')
 
 
-// GET api/posts
-// gets all the posts
+
+// GET api/posts?page=2&limit=5&sort=-time
+/* gets all the posts */
 router.get('/', async function (req, res, next) {
     try {
-        const posts = await Post.getPosts();
-        res.json({results : posts});
-    } catch(err) {
-        next(err);
+        const page= req.query.page ||1;
+        const limit = req.query.limit || 10;
+        const skip = (page-1)*limit;
+        const sort = req.query.sort;
+        const posts = await Post.getPosts(skip, limit, sort);
+
+        res.json({ posts});
+    } catch(error) {
+        next(error)
     }   
 })
 
 
 // GET api/posts/:id
 /* gets 1 post */
-router.get('/:id', async function (req, res, next) {
+router.get('/:id', async (req, res, next)=> {
     try {
         const id = req.params.id;
         const post = await Post.findById(id);
         res.json({results : post});
-    } catch(err) {
-        next(err)
+    } catch(error) {
+        next(error)
     }  
 })
 
 
-// GET api//posts/user/{id}
+// GET api/posts/user/{id}
 // Returns all the posts of a user from newest to oldest
 router.get('/user/:author', async (req, res, next) => {
 
@@ -53,7 +57,7 @@ router.get('/user/:author', async (req, res, next) => {
         // if userId is a ObjectID
         if(!userId.match(/^[a-fA-F0-9]{24}$/)) next() 
 
-        const userPosts = await Post.getUserPosts(filter, sort, skip, limit);
+        const userPosts = await Post.getPosts(filter, sort, skip, limit);
         res.json({page, limit, result: userPosts})
 
     } catch (err) {
@@ -62,17 +66,7 @@ router.get('/user/:author', async (req, res, next) => {
 })
 
 
-// POST api/posts
-router.post('/',async (req, res,next) => {
-    try {
-        const postData = req.body;
-        const newPost = new Post(postData);
-        const savePost = await newPost.save()
-        res.json( { posts : savePost })
-    } catch (err) {
-        next(err)
-    }
-})
+
 
 
 //DELETE api/posts/:id
