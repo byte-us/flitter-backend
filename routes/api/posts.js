@@ -1,8 +1,10 @@
 'use strict';
 
+var createError = require('http-errors');
 const express = require('express');
 const router = express.Router();
 const Post = require('../../models/Post')
+const User = require('../../models/User')
 
 
 
@@ -10,15 +12,29 @@ const Post = require('../../models/Post')
 /* gets all the posts */
 router.get('/', async function (req, res, next) {
     try {
-        const page= req.query.page ||1;
+        const username = req.query.username;
+        const filter = {};
+
+        if (username) {
+            const user = await User.findOne({username})
+            if (!user) {
+                next(createError(404, `Username ${username} does not exist`));
+                return;
+            }
+            filter.author = user.id
+        }
+
+        // paginación
+        const page = req.query.page || 1;
+        // default number of postr per page 10
         const limit = req.query.limit || 10;
         const skip = (page-1)*limit;
-        const sort = req.query.sort;
-        const posts = await Post.getPosts(skip, limit, sort);
+        const sort = req.query.sort || "-author";
 
-        res.json({ posts});
-    } catch(error) {
-        next(error)
+        const posts = await Post.getPosts(filter, sort, skip, limit);
+        res.json({page, limit, result: posts});
+    } catch(err) {
+        next(err);
     }   
 })
 
@@ -36,37 +52,17 @@ router.get('/:id', async (req, res, next)=> {
 })
 
 
-// GET api/posts/user/{id}
-// Returns all the posts of a user from newest to oldest
-router.get('/user/:author', async (req, res, next) => {
-
-
+// POST api/posts
+router.post('/',async (req, res,next) => {
     try {
-        const userId = req.params.author;
-
-        // paginación
-        const page = req.query.page || 1;
-        // default number of postr per page 10
-        const limit = req.query.limit || 10;
-        const skip = (page-1)*limit;
-        const sort = req.query.sort || "-author";
-
-        const filter = {author: userId};
-
-
-        // if userId is a ObjectID
-        if(!userId.match(/^[a-fA-F0-9]{24}$/)) next() 
-
-        const userPosts = await Post.getPosts(filter, sort, skip, limit);
-        res.json({page, limit, result: userPosts})
-
+        const postData = req.body;
+        const newPost = new Post(postData);
+        const savePost = await newPost.save()
+        res.json( { posts : savePost })
     } catch (err) {
-        next(err);
+        next(err)
     }
 })
-
-
-
 
 
 //DELETE api/posts/:id
