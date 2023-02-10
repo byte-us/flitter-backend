@@ -13,15 +13,20 @@ const User = require('../../models/User')
 router.get('/', async function (req, res, next) {
     try {
         const username = req.query.username;
+        const search = req.query.search;
         const filter = {};
 
         if (username) {
-            const user = await User.findOne({username})
+            const user = await User.findOne({username});
             if (!user) {
                 next(createError(404, `Username ${username} does not exist`));
                 return;
             }
-            filter.author = user.id
+            filter.author = user.id;
+        }
+
+        if (search) {
+            filter.$text = {$search: search};
         }
 
         // paginación

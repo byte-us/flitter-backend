@@ -23,6 +23,8 @@ const postSchema = mongoose.Schema({
 
 }, { timestamps: true });
 
+postSchema.index({message: 'text'})
+
 
 postSchema.statics.getPosts = function(filter, sort, skip, limit) {
   const query = Post.find(filter);
