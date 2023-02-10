@@ -37,7 +37,8 @@ router.get('/', async function (req, res, next) {
         const sort = req.query.sort || "-author";
 
         const posts = await Post.getPosts(filter, sort, skip, limit);
-        res.json({page, limit, result: posts});
+        const totalPosts = Object.keys(posts).length
+        res.json({page, limit, totalPosts, result: posts});
     } catch(err) {
         next(err);
     }   
