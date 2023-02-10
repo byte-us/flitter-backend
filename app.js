@@ -42,13 +42,13 @@ app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 app.use((req, res, next)=> {
-  app.locals.registerMessage = req.flash('registerMessage')
+  app.locals.registerMessage = req.flash('signupMessage')
   app.locals.loginMessage = req.flash('loginMessage')
   next();
 });
 
 // API routes
-app.use('/api/posts', apiRouter);
+
 app.use('/api/posts', postsRouter);
 
 app.use('/api/users', usersApi);

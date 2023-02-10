@@ -7,38 +7,43 @@ const router = express.Router();
 const passport = require('passport')
 
 
-// GET /register
-router.get('/register', (req, res, next) => {
-  res.render('register');
+router.get('/', (req, res, next) => {
+  res.render('index');
+});
 
+
+// GET /signup
+router.get('/signup', (req, res, next) => {
+  res.render('signup');
 })
 
-// POST /register
-router.post('/register', passport.authenticate('local-register', {
+
+// POST /signup    
+router.post('/signup', passport.authenticate('local-signup', {
   successRedirect: '/',
-  failureRedirect: '/register',
+  failureRedirect: '/signup',
   passReqToCallback: true
 })) 
 
 // GET /login
 router.get('/login', (req, res, next) => {
-  res.render('login')
+  res.render('login');
 });
 
 // POST /login
 router.post('/login', passport.authenticate('local-login', {
   successRedirect: '/',
-  failureRedirect: '/login',
+  failureRedirect: '/login', 
   passReqToCallback: true
 }));
 
-
+/*
 router.get('/logout', (req, res, send) => {
   req.logOut();
   res.redirect('/login');
 });
 
-/*
+
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
     return next();

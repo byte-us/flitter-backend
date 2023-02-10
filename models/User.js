@@ -4,9 +4,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 const {Schema} = mongoose;
 
-const saltRounds = 10;
-
-
 const userSchema = new mongoose.Schema({
 
     name: { type: String, require: true },
@@ -31,7 +28,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-
+//encrypt password
 userSchema.methods.encryptPassword = function(password) {
  return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
