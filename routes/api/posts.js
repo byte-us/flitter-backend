@@ -1,44 +1,28 @@
 'use strict';
 
+var createError = require('http-errors');
 const express = require('express');
-
-const User = require('../../models/User')
-const Post = require('../../models/Post')
 const router = express.Router();
+const Post = require('../../models/Post')
+const User = require('../../models/User')
 
 
-// GET api/posts
-// gets all the posts
+
+// GET api/posts?page=2&limit=5&sort=-time
+/* gets all the posts */
 router.get('/', async function (req, res, next) {
     try {
-        const posts = await Post.getPosts();
-        res.json({results : posts});
-    } catch(err) {
-        next(err);
-    }   
-})
+        const username = req.query.username;
+        const filter = {};
 
-
-// GET api/posts/:id
-/* gets 1 post */
-router.get('/:id', async function (req, res, next) {
-    try {
-        const id = req.params.id;
-        const post = await Post.findById(id);
-        res.json({results : post});
-    } catch(err) {
-        next(err)
-    }  
-})
-
-
-// GET api//posts/user/{id}
-// Returns all the posts of a user from newest to oldest
-router.get('/user/:author', async (req, res, next) => {
-
-
-    try {
-        const userId = req.params.author;
+        if (username) {
+            const user = await User.findOne({username})
+            if (!user) {
+                next(createError(404, `Username ${username} does not exist`));
+                return;
+            }
+            filter.author = user.id
+        }
 
         // paginación
         const page = req.query.page || 1;
@@ -47,18 +31,24 @@ router.get('/user/:author', async (req, res, next) => {
         const skip = (page-1)*limit;
         const sort = req.query.sort || "-author";
 
-        const filter = {author: userId};
-
-
-        // if userId is a ObjectID
-        if(!userId.match(/^[a-fA-F0-9]{24}$/)) next() 
-
-        const userPosts = await Post.getUserPosts(filter, sort, skip, limit);
-        res.json({page, limit, result: userPosts})
-
-    } catch (err) {
+        const posts = await Post.getPosts(filter, sort, skip, limit);
+        res.json({page, limit, result: posts});
+    } catch(err) {
         next(err);
-    }
+    }   
+})
+
+
+// GET api/posts/:id
+/* gets 1 post */
+router.get('/:id', async (req, res, next)=> {
+    try {
+        const id = req.params.id;
+        const post = await Post.findById(id);
+        res.json({results : post});
+    } catch(error) {
+        next(error)
+    }  
 })
 
 
