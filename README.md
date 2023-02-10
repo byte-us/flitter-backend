@@ -41,3 +41,7 @@ GET /api/posts?page=2
 ## Limit:
 Limit posts of a user:. Default is 10
 GET /api/posts?limit=5
+
+## Search:
+Search text in the "message" field of posts
+GET /api/posts?search=first flit
