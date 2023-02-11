@@ -37,20 +37,28 @@ router.post('/login', passport.authenticate('local-login', {
   passReqToCallback: true
 }));
 
+
+/*
+router.get('/',isAuthenticated, (req, res, next) => {
+  res.render('index');
+});
+*/
+
+
 /*
 router.get('/logout', (req, res, send) => {
   req.logOut();
   res.redirect('/login');
 });
 
-
+*/
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()) {
     return next();
   }
   res.redirect('/');
 }
-*/
+
 
 
   module.exports = router;

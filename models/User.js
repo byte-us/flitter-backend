@@ -13,16 +13,19 @@ const userSchema = new mongoose.Schema({
 
     followers: [{
             type: 'ObjectId',
-            ref: 'User'
+            ref: 'User',
+            require: false
           }],
     following: [{
         type: 'ObjectId',
-        ref: 'User'
+        ref: 'User',
+        require: false
       }],
     posts: [
       {
         type: 'ObjectId',
-        ref: 'Post'
+        ref: 'Post',
+        require: false
       }
     ]
 }, { timestamps: true });

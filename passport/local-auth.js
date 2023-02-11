@@ -16,51 +16,45 @@ passport.deserializeUser( async(id, done) => {
 
 // receive registration and validate it
 passport.use('local-signup', new localStrategy({
-    usernameField: 'username',
-    emailField: 'email',
-    passwordField: 'password',
-    passReqToCallback: true
-} , async (req, email, username, password, done) => {
-
-    const user = await User.findOne({ email: email }, { username: username})
-    if (user) {
-        return done(null, false, req.flash('signupMessage', 'The email or username is already taken'))
-    } else {
-        const newUser = newUser();
-        newUser.username = username;
-        newUser.email = email;
-        newUser.password = newUser.encryptPassword(password); 
-    }
-    
-    //save the new user
-    await newUser.save(function(err, user) {
-        if (err) return console.error(err);
-        console.log('User' + user.username + 'create')
-    })
-
-    /*
+  nameField: 'name',
+  usernameField: 'username',
+  emailField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true
+}, async (req, name, username, email, password, done) => {
+  const user = await User.findOne({'name': name},{'username': username},{'email': email})
+  console.log(user)
+  if(user) {
+    return done(null, false, req.flash('signupMessage', 'The Email is already Taken.'));
+  } else {
+    const newUser = new User();
+    newUser.name = name;
+    newUser.username = username;
+    newUser.email = email;
+    newUser.password = newUser.encryptPassword(password);
+    console.log(newUser)
     await newUser.save();
     done(null, newUser);
-    */
+  }
+}));
 
-}))
 
 
 
 passport.use('local-login', new localStrategy({
-    usernameField: 'email',
+    emailField: 'email',
     passwordField: 'password',
     passReqToCallback: true
-
- 
-}, async (req, email, password, done) => {
-    User.findOne({ email: email })
-    if (!user) {
-        return done(null, false, req.flash('loginMessage', 'No username or email found'))
-    } if (user.comparePassword(password)) {
-        return done(null, false, req.flash('loginMessage', 'Incorrect Password'))
+  }, async (req, email, password, done) => {
+    const user = await User.findOne({email: email});
+    if(!user) {
+      return done(null, false, req.flash('loginMessage', 'No User Found'));
     }
-    done(null, user)
-}));
+    if(!user.comparePassword(password)) {
+      return done(null, false, req.flash('loginMessage', 'Incorrect Password'));
+    }
+    return done(null, user);
+  }));
+
 
 
