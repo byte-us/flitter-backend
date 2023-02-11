@@ -16,19 +16,17 @@ passport.deserializeUser( async(id, done) => {
 
 // receive registration and validate it
 passport.use('local-signup', new localStrategy({
-  nameField: 'name',
   usernameField: 'username',
   emailField: 'email',
   passwordField: 'password',
   passReqToCallback: true
-}, async (req, name, username, email, password, done) => {
-  const user = await User.findOne({'name': name},{'username': username},{'email': email})
+}, async (req, username, email, password, done) => {
+  const user = await User.findOne({'username': username},{'email': email})
   console.log(user)
   if(user) {
     return done(null, false, req.flash('signupMessage', 'The Email is already Taken.'));
   } else {
     const newUser = new User();
-    newUser.name = name;
     newUser.username = username;
     newUser.email = email;
     newUser.password = newUser.encryptPassword(password);
@@ -50,7 +48,7 @@ passport.use('local-login', new localStrategy({
     if(!user) {
       return done(null, false, req.flash('loginMessage', 'No User Found'));
     }
-    if(!user.comparePassword(password)) {
+    else if(!user.comparePassword(password)) {
       return done(null, false, req.flash('loginMessage', 'Incorrect Password'));
     }
     return done(null, user);
