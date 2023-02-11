@@ -33,10 +33,10 @@ router.get('/', async function (req, res, next) {
         }
 
         if (published === "true") {
-            filter.published = {$lte: new Date()};
+            filter.publishedDate = {$lte: new Date()};
         }
         if (published === "false") {
-            filter.published = {$gt: new Date()};
+            filter.publishedDate = {$gt: new Date()};
         }
 
         // paginación

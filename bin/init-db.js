@@ -184,6 +184,7 @@ async function initPosts(insertedUsers) {
         {
             author: insertedUsers[1]._id,
             message: "The more the merrier!",
+            publishedDate: "2023-03-11"
         }]).catch(err => {
             console.log('There was an error', err)
             process.exit()
