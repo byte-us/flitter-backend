@@ -44,10 +44,11 @@ router.get('/', async function (req, res, next) {
         // default number of postr per page 10
         const limit = req.query.limit || 10;
         const skip = (page-1)*limit;
-        const sort = req.query.sort || "-published";
+        const sort = req.query.sort || "-publishedDate";
 
         const posts = await Post.getPosts(filter, sort, skip, limit);
-        res.json({page, limit, result: posts});
+        const totalPosts = Object.keys(posts).length;
+        res.json({totalPosts, page, limit, result: posts});
     } catch(err) {
         next(err);
     }   
