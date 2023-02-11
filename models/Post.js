@@ -19,7 +19,8 @@ const postSchema = mongoose.Schema({
           type: 'ObjectId',
           ref: 'User',
         }
-      ]
+      ],
+      publishedDate: {type: Date, default: Date.now}
 
 }, { timestamps: true });
 

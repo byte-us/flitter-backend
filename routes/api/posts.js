@@ -3,8 +3,9 @@
 var createError = require('http-errors');
 const express = require('express');
 const router = express.Router();
-const Post = require('../../models/Post')
-const User = require('../../models/User')
+const Post = require('../../models/Post');
+const User = require('../../models/User');
+const { default: mongoose } = require('mongoose');
 
 
 
@@ -14,8 +15,10 @@ router.get('/', async function (req, res, next) {
     try {
         const username = req.query.username;
         const search = req.query.search;
+        const published = req.query.published;
         const filter = {};
 
+        // filters
         if (username) {
             const user = await User.findOne({username});
             if (!user) {
@@ -29,12 +32,19 @@ router.get('/', async function (req, res, next) {
             filter.$text = {$search: search};
         }
 
+        if (published === "true") {
+            filter.published = {$lte: new Date()};
+        }
+        if (published === "false") {
+            filter.published = {$gt: new Date()};
+        }
+
         // paginación
         const page = req.query.page || 1;
         // default number of postr per page 10
         const limit = req.query.limit || 10;
         const skip = (page-1)*limit;
-        const sort = req.query.sort || "-author";
+        const sort = req.query.sort || "-published";
 
         const posts = await Post.getPosts(filter, sort, skip, limit);
         res.json({page, limit, result: posts});
