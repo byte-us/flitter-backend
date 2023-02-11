@@ -60,4 +60,29 @@ router.delete('/:id', async (req, res, next) => {
     }
 })
 
+// PUT api/users/:id/follow
+/* follow a user and update lists of "following" and "followers" */
+router.put('/:id/follow', async (req, res, next) => {
+    try {
+        const anotherUserId = req.body._id
+        // identify the user with the provided id
+        const user = await User.findById(req.params.id);
+        // if in this user's followers' list this id doesn't exist:
+        if (!user.followers.includes(anotherUserId)) {
+        await Promise.all([
+            // add to the list of following and follower the corresponding ids
+          User.updateOne({ _id: anotherUserId }, { $push: { following: user._id } }),
+          User.updateOne({ _id: user._id }, { $push: { followers: anotherUserId } })
+        ]);
+        res.json({ result: "You are now following this user" });
+      } else {
+        res.json({ result: "You already follow this user" });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  
+
 module.exports = router;
