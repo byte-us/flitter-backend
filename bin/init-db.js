@@ -88,6 +88,7 @@ async function initPosts(insertedUsers) {
             console.log('There was an error', err)
             process.exit()
         });
+    Post.createIndexes();
 
     console.log(`Created ${insertedUsers.length} posts`)
 }
