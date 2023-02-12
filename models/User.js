@@ -1,8 +1,8 @@
 'use strict'
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs');
-const {Schema} = mongoose;
+const bcrypt = require('bcrypt');
+const Schema = mongoose.Schema
 
 const userSchema = new mongoose.Schema({
 
@@ -31,15 +31,17 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-//encrypt password
-userSchema.methods.encryptPassword = function(password) {
- return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-};
+userSchema.pre('save', async function (next) {
+  const hash = await bcrypt.hash(this.password, 10)
+  this.password = hash
+  next()
+})
 
-//verification password correct
-userSchema.methods.comparePassword = function(password) {
-  return bcrypt.compareSync(password, this.password);
- };
+userSchema.methods.isValidPassword = async function(password) {
+  const user = this;
+  const compare = await bcrypt.compare(password, user.password)
+  return compare
+}
 
 
 userSchema.statics.getUsers = function(filter) {
