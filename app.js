@@ -17,6 +17,7 @@ require('./passport/local-auth')
 // connection to API
 const usersApi = require('./routes/api/users')
 const postsRouter = require('./routes/api/posts')
+const resetRouter = require('./routes/api/reset')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -49,7 +50,7 @@ app.use((req, res, next)=> {
 
 // API routes
 app.use('/api/posts', postsRouter);
-
+app.use('/api/reset', resetRouter);
 app.use('/api/users', usersApi);
 app.use('/', require ('./routes/api/login'));
 
