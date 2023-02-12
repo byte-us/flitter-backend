@@ -1,61 +1,93 @@
-'use strict';
+"use strict";
 
-//const User = require('../../models/User');
-//const { Router } = require('express');
+const express = require("express");
+const User = require("../../models/User");
+const { Router } = require("express");
+const router = express.Router();
+const passport = require("passport");
+const crypto = require("crypto");
 
-const express = require('express')
-const router = express.Router()
-
-const passport = require('passport')
-const jwt = require('jsonwebtoken')
-
-
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.send('Hello World')
-})
-
-// GET /signup
-router.get('/signup', (req, res, next) => {
-  res.render('signup');
-})
-
-
-router.post('/signup', passport.authenticate('signup', { session: false }), async (req, res, next) => {
-  res.json({
-    message: 'Signup successful',
-    user: req.user,
-  })
-})
-
-// GET /login
-router.get('/login', (req, res, next) => {
-  res.render('login');
+// GET /register
+router.get("/register", (req, res, next) => {
+  res.render("register");
 });
 
-
-router.post('/login', async (req, res, next) => {
-  passport.authenticate('login', async (err, user, info) => {
-    try {
-      if (err || !user) {
-        console.log(err)
-        const error = new Error('new Error')
-        return next(error)
+// POST /register
+router.post("/register", function (req, res, next) {
+  var salt = crypto.randomBytes(16);
+  crypto.pbkdf2(
+    req.body.password,
+    salt,
+    310000,
+    32,
+    "sha256",
+    async function (err, hashedPassword) {
+      if (err) {
+        return next(err);
       }
 
-      req.login(user, { session: false }, async (err) => {
-        if (err) return next(err)
-        const body = { _id: user._id, email: user.email }
+      const existingEmail = await User.findOne({ email: req.body.email });
+      const existingUsername = await User.findOne({
+        username: req.body.username,
+      });
 
-        const token = jwt.sign({ user: body }, 'top_secret')
-        return res.json({ token })
-      })
+      if (existingEmail || existingUsername) {
+        return res.status(403).send({error: "Account already exists with email or username"});
+      }
+
+      const user = new User({
+        email: req.body.email,
+        username: req.body.username,
+        password: hashedPassword.toString("hex"),
+        salt: salt.toString("hex"),
+      });
+      await user.save();
+
+      req.login({ id: user.id, username: req.body.username }, function (err) {
+        if (err) {
+          return next(err);
+        }
+        res.send();
+      });
     }
-    catch(e) {
-      return next(e)
+  );
+});
+
+// GET /login
+router.get("/login", (req, res, next) => {
+  res.render("login");
+});
+
+router.post(
+  "/login/password",
+  passport.authenticate("local", {
+    successRedirect: "/api/login/success",
+    failureRedirect: "/api/login/failure",
+  })
+);
+
+router.get("/login/success", function (req, res) {
+  res.send();
+});
+
+router.get("/login/failure", function (req, res) {
+  res.status(401).json({ error: "Failed to log in" });
+});
+
+// POST /login
+router.post("/login", function (req, res, next) {
+  res.send();
+});
+
+router.post("/logout", function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
     }
-  })(req, res, next)
-})
+    res.redirect("/");
+  });
+});
+
 
 router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res, next) => {
   res.json({

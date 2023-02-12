@@ -42,3 +42,13 @@ GET /api/posts?page=2
 Limit posts of a user:. Default is 10
 GET /api/posts?limit=5
 
+## Sort:
+Get posts sorted by a defined field. Default by publishedDate in descending order
+## Search:
+Search text in the "message" field of posts
+GET /api/posts?search=first flit
+
+## Published posts
+Search only posts that were published (Date <= now) by setting published=true.
+To search for posts that were not published set published=false
+GET /api/posts?published=true

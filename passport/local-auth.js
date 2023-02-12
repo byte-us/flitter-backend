@@ -1,57 +1,55 @@
-const passport = require('passport')
-const localStrategy = require('passport-local').Strategy
-const User = require('../models/User')
 
-const JWTStrategy = require('passport-jwt').Strategy
-const ExtractJWT = require('passport-jwt').ExtractJwt
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const User = require("../models/User");
+const crypto = require("crypto");
 
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
 
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id);
+  done(null, user);
+});
 
-passport.use('signup', new localStrategy({
-  usernameField: 'email',
-  passwordField: 'password'
-}, async (email, password, done) => {
-  try {
-      const user = await User.create({email, password })
-      return done(null, user)
-  } catch (e) {
-      done(e)
-  }
-}))
-
-passport.use('login', new localStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
-}, async (email, password, done) => {
-  try {
-      const user = await User.findOne({ email })
+console.log("register local strategy");
+passport.use(
+  // Passport specifically expects a "username" parameter, which means we need to
+  // send the email as the username. This is not the same as our username.
+  new LocalStrategy(async function verify(username, password, cb) {
+    try {
+      const user = await User.findOne({ email: username });
       if (!user) {
-          return done(null, false, { message: 'User not found' })
+        return cb(null, false, { message: "Incorrect username or password." });
       }
-
-      const validate = await user.isValidPassword(password)
-
-      if (!validate) {
-          return done(null, false, { message: 'Wrong password' })
-      }
-
-      return done(null, user, { message: 'Login successfull' })
-  } catch (e) {
-      return done(e)
-  }
-}))
-
-passport.use(new JWTStrategy({
-  secretOrKey: 'top_secret',
-  jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
-}, async (token, done) => {
-  try {
-      return done(null, token.user)
-  } catch (e) {
-      done(error)
-  }
-}))
-
-
-
-
+      crypto.pbkdf2(
+        password,
+        Buffer.from(user.salt, "hex"),
+        310000,
+        32,
+        "sha256",
+        function (err, hashedPassword) {
+          if (err) {
+            console.error(err);
+            return cb(err);
+          }
+          if (
+            !crypto.timingSafeEqual(
+              Buffer.from(user.password, "hex"),
+              hashedPassword
+            )
+          ) {
+            return cb(null, false, {
+              message: "Incorrect username or password.",
+            });
+          }
+          return cb(null, user);
+        }
+      );
+    } catch (err) {
+      console.error(err);
+      cb(err);
+    }
+  })
+);

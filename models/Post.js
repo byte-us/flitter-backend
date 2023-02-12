@@ -19,9 +19,12 @@ const postSchema = mongoose.Schema({
           type: 'ObjectId',
           ref: 'User',
         }
-      ]
+      ],
+      publishedDate: {type: Date, default: Date.now}
 
 }, { timestamps: true });
+
+postSchema.index({message: 'text'})
 
 
 postSchema.statics.getPosts = function(filter, sort, skip, limit) {
