@@ -94,7 +94,7 @@ router.put('/:id/unfollow', async (req, res, next) => {
                 User.updateOne({ _id: anotherUser }, {$pull: {following: userToUnfollow._id}}),
                 User.updateOne({ _id: userToUnfollow._id }, {$pull: {followers: anotherUser}})
             ]);
-            res.json({result: "You're no longer following this userToUnfollow"});
+            res.json({result: "You're no longer following this user"});
         } else {
             res.json({result: "You don't follow this user"});
         }

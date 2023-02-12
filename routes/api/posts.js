@@ -115,4 +115,26 @@ router.put('/:id', async (req, res, next) => {
     }
 })
 
+
+//PUT api/posts/:id/kudos
+/* give and remove kudos from a post */
+router.put('/:id/kudos', async (req, res, next) => {
+    try {
+        const userId = await User.findById(req.body._id);
+        const postId = await Post.findById(req.params.id);
+
+        if (!postId.kudos.includes(userId._id)) {
+            await Post.updateOne({ _id: postId._id }, {$push: {kudos: userId._id}});
+            res.json({message: 'You liked this post'})
+       
+        } else {
+            await Post.updateOne({ _id: postId._id }, {$pull: {kudos: userId._id}})
+            res.json({message: 'Your kudos was removed' })
+        }
+    } catch (error) {
+        next(error)
+    }
+});
+
+
 module.exports = router;
