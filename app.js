@@ -19,7 +19,6 @@ const usersApi = require('./routes/api/users')
 const postsRouter = require('./routes/api/posts')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const bodyParser = require('body-parser');
 
 var app = express();
 
@@ -29,8 +28,8 @@ app.set('view engine', 'ejs');
 
 app.use(cors());
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
@@ -38,7 +37,6 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
-app.use(passport.authenticate('session'));
 
 app.use(flash())
 app.use(passport.initialize())
@@ -53,7 +51,7 @@ app.use((req, res, next)=> {
 app.use('/api/posts', postsRouter);
 
 app.use('/api/users', usersApi);
-app.use('/api/', require ('./routes/api/login'));
+app.use('/', require ('./routes/api/login'));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
