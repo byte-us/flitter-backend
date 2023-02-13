@@ -37,6 +37,12 @@ postSchema.statics.getPosts = function(filter, sort, skip, limit) {
   return query.exec();
 }
 
+postSchema.statics.countPosts = function(filter) {
+  const query = Post.find(filter);
+  query.count();
+  return query.exec();
+}
+
 
 
 const Post = mongoose.model('Post', postSchema);
