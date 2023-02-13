@@ -91,15 +91,23 @@ async (req, res, next) => {
 
 //DELETE api/posts/:id
 /* deletes 1 post*/
+router.delete('/:id', passport.authenticate('jwt', {session: false}));
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const post = await Post.findById(id);
         if(!post) {
-            return next(new Error(404))
+            next(createError(404, `Post ${id} does not exist`));
+            return;
         }
+
+        if(req.user.id !== post.author.toString()) {
+            next(createError(403 , "Can not remove posts of other users"));
+            return;
+        }
+
         await Post.deleteOne({_id: id});
-        res.json();
+        res.json(post);
         
     } catch (error) {
         next(error)
