@@ -14,7 +14,7 @@ const { default: mongoose } = require('mongoose');
 router.get('/', async function (req, res, next) {
     try {
         const username = req.query.username;
-        const search = req.query.search;
+        const text = req.query.text;
         const published = req.query.published;
         const filter = {};
 
@@ -28,8 +28,8 @@ router.get('/', async function (req, res, next) {
             filter.author = user.id;
         }
 
-        if (search) {
-            filter.$text = {$search: search};
+        if (text) {
+            filter.$text = {$search: text};
         }
 
         if (published === "true") {
