@@ -2,99 +2,64 @@
 
 const express = require("express");
 const User = require("../../models/User");
-const { Router } = require("express");
+const Token = require("../../models/Token");
 const router = express.Router();
 const passport = require("passport");
-const crypto = require("crypto");
-
-// GET /register
-router.get("/register", (req, res, next) => {
-  res.render("register");
-});
+const jwt = require("jsonwebtoken")
 
 // POST /register
-router.post("/register", function (req, res, next) {
-  var salt = crypto.randomBytes(16);
-  crypto.pbkdf2(
-    req.body.password,
-    salt,
-    310000,
-    32,
-    "sha256",
-    async function (err, hashedPassword) {
-      if (err) {
-        return next(err);
-      }
+router.post("/register", async function (req, res, next) {
+  if (!req.body.username || !req.body.password || !req.body.email) {
+    return res.status(400).send({error: "Missing username or password or email"});
+  }
+  const existingEmail = await User.findOne({ email: req.body.email });
+  const existingUsername = await User.findOne({ username: req.body.username });
 
-      const existingEmail = await User.findOne({ email: req.body.email });
-      const existingUsername = await User.findOne({
-        username: req.body.username,
-      });
+  if (existingEmail || existingUsername) {
+    return res.status(403).send({error: "Account already exists with email or username"});
+  }
 
-      if (existingEmail || existingUsername) {
-        return res.status(403).send({error: "Account already exists with email or username"});
-      }
+  const user = new User({
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password,
+  });
+  await user.save();
+  return res.send({message: "Successfully registered"});
 
-      const user = new User({
-        email: req.body.email,
-        username: req.body.username,
-        password: hashedPassword.toString("hex"),
-        salt: salt.toString("hex"),
-      });
-      await user.save();
-
-      req.login({ id: user.id, username: req.body.username }, function (err) {
-        if (err) {
-          return next(err);
-        }
-        res.send();
-      });
-    }
-  );
 });
 
-// GET /login
-router.get("/login", (req, res, next) => {
-  res.render("login");
-});
 
 router.post(
-  "/login/password",
+  "/login",
   passport.authenticate("local", {
-    successRedirect: "/api/login/success",
-    failureRedirect: "/api/login/failure",
+    session: false,
   })
 );
-
-router.get("/login/success", function (req, res) {
-  res.send();
+router.post("/login", async function (req, res, next) {
+  if (!req.user) {
+    return res.status(400).json({
+      message: "Login failed"
+    });
+  };
+  const newToken = new Token({
+    userId: req.user.id
+  })
+  const savedToken = await newToken.save();
+  const token = jwt.sign(savedToken.getJWT(), 'your_jwt_secret');
+  return res.json({token});
 });
 
-router.get("/login/failure", function (req, res) {
-  res.status(401).json({ error: "Failed to log in" });
-});
-
-// POST /login
-router.post("/login", function (req, res, next) {
-  res.send();
-});
-
-router.post("/logout", function (req, res, next) {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
+router.post('/logout', passport.authenticate('jwt', {session: false}));
+router.post('/logout', (req, res, next) => {
+  Token.deleteMany({
+    userId: req.user.id
+  }).then(() => {
+    res.send({message: "Successfully invalidated Tokens for user"})
+  }).catch(()=>{
+    next();
   });
 });
 
-/*
-function isAuthenticated(req, res, next) {
-  if(req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-}
-*/
 
 module.exports = router;
