@@ -14,7 +14,7 @@ const { default: mongoose } = require('mongoose');
 router.get('/', async function (req, res, next) {
     try {
         const username = req.query.username;
-        const search = req.query.search;
+        const text = req.query.text;
         const published = req.query.published;
         const filter = {};
 
@@ -28,8 +28,8 @@ router.get('/', async function (req, res, next) {
             filter.author = user.id;
         }
 
-        if (search) {
-            filter.$text = {$search: search};
+        if (text) {
+            filter.$text = {$search: text};
         }
 
         if (published === "true") {
@@ -47,7 +47,8 @@ router.get('/', async function (req, res, next) {
         const sort = req.query.sort || "-publishedDate";
 
         const posts = await Post.getPosts(filter, sort, skip, limit);
-        const totalPosts = Object.keys(posts).length;
+
+        const totalPosts = await Post.countPosts(filter)
         res.json({totalPosts, page, limit, result: posts});
     } catch(err) {
         next(err);
@@ -67,14 +68,19 @@ router.get('/:id', async (req, res, next)=> {
     }  
 })
 
-
 // POST api/posts
-router.post('/',async (req, res,next) => {
+router.post('/', 
+async (req, res, next) => {
     try {
-        const postData = req.body;
-        const newPost = new Post(postData);
-        const savePost = await newPost.save()
-        res.json( { posts : savePost })
+        const {message} = req.body;
+        const publishedDate = new Date();
+        // TODO - need to get the current user from the access token
+        // and look that user up instead.
+        const author = await User.findOne();
+
+        const newPost = new Post({author, message, publishedDate});
+        const savedPost = await newPost.save()
+        res.json(savedPost)
     } catch (err) {
         next(err)
     }

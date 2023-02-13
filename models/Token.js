@@ -5,8 +5,12 @@ const mongoose = require('mongoose');
 const tokenSchema = mongoose.Schema({
     id: { type: Number},
     userId: {type: String },
-    expiryDate: { type: date }
+    expiryDate: { type: Date }
 }, { timestamps: true })
+
+tokenSchema.methods.getJWT = function() {
+    return this.toObject();
+}
 
 const Token = mongoose.model('Token', tokenSchema);
 
