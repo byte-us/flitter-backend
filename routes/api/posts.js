@@ -6,6 +6,7 @@ const router = express.Router();
 const Post = require('../../models/Post');
 const User = require('../../models/User');
 const { default: mongoose } = require('mongoose');
+const passport = require("passport");
 
 
 
@@ -69,6 +70,7 @@ router.get('/:id', async (req, res, next)=> {
 })
 
 // POST api/posts
+router.post('/', passport.authenticate('jwt', {session: false}));
 router.post('/', 
 async (req, res, next) => {
     try {
@@ -76,7 +78,7 @@ async (req, res, next) => {
         const publishedDate = new Date();
         // TODO - need to get the current user from the access token
         // and look that user up instead.
-        const author = await User.findOne();
+        const author = req.user;
 
         const newPost = new Post({author, message, publishedDate});
         const savedPost = await newPost.save()
