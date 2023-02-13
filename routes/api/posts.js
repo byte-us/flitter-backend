@@ -47,7 +47,8 @@ router.get('/', async function (req, res, next) {
         const sort = req.query.sort || "-publishedDate";
 
         const posts = await Post.getPosts(filter, sort, skip, limit);
-        const totalPosts = Object.keys(posts).length;
+
+        const totalPosts = await Post.countPosts(filter)
         res.json({totalPosts, page, limit, result: posts});
     } catch(err) {
         next(err);

@@ -15,7 +15,7 @@ const upload = multer({ dest: 'public/images/' })
 require('./lib/connectMongoose');
 
 // require passport
-require('./passport/local-auth')
+require('./passport/auth')
 
 // connection to API
 const usersApi = require('./routes/api/users')
