@@ -68,14 +68,19 @@ router.get('/:id', async (req, res, next)=> {
     }  
 })
 
-
 // POST api/posts
-router.post('/',async (req, res,next) => {
+router.post('/', 
+async (req, res, next) => {
     try {
-        const postData = req.body;
-        const newPost = new Post(postData);
-        const savePost = await newPost.save()
-        res.json( { posts : savePost })
+        const {message} = req.body;
+        const publishedDate = new Date();
+        // TODO - need to get the current user from the access token
+        // and look that user up instead.
+        const author = await User.findOne();
+
+        const newPost = new Post({author, message, publishedDate});
+        const savedPost = await newPost.save()
+        res.json(savedPost)
     } catch (err) {
         next(err)
     }
