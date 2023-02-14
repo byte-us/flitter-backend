@@ -20,6 +20,7 @@ require('./passport/auth')
 // connection to API
 const usersApi = require('./routes/api/users')
 const postsRouter = require('./routes/api/posts')
+const resetRouter = require('./routes/api/reset')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const bodyParser = require('body-parser');
@@ -54,7 +55,7 @@ app.use((req, res, next)=> {
 
 // API routes
 app.use('/api/posts', postsRouter);
-
+app.use('/api/reset', resetRouter);
 app.use('/api/users', usersApi);
 app.use('/api/', require ('./routes/api/login'));
 app.use('/upload/', require ('./routes/api/upload'));

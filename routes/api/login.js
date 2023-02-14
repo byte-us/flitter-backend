@@ -5,7 +5,17 @@ const User = require("../../models/User");
 const Token = require("../../models/Token");
 const router = express.Router();
 const passport = require("passport");
+
+const crypto = require("crypto");
+
+
+// GET /register
+router.get("/register", (req, res, next) => {
+  res.render("register");
+});
+
 const jwt = require("jsonwebtoken")
+
 
 // POST /register
 router.post("/register", async function (req, res, next) {
@@ -60,6 +70,8 @@ router.post('/logout', (req, res, next) => {
     next();
   });
 });
+
+
 
 
 module.exports = router;
