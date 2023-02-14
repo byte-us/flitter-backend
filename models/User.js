@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, unique: true },
     password: { type: String, require: true },
     salt: { type: String, require: true },
+    profileImage: {type: Array, default: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg']},
 
     followers: [{
             type: 'ObjectId',
