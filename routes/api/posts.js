@@ -63,7 +63,7 @@ router.get('/:id', async (req, res, next)=> {
     try {
         const id = req.params.id;
         const post = await Post.findById(id);
-        res.json({results : post});
+        res.json({result : post});
     } catch(error) {
         next(error)
     }  
