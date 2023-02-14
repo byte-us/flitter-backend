@@ -10,7 +10,7 @@ const passport = require("passport");
 router.get('/auth', passport.authenticate('jwt', {session: false}));
 router.get('/auth', async function (req, res, next) {
     try {
-        res.json({results : req.user});
+        res.json({result : req.user});
     } catch(error) {
         next(error)
     }
@@ -34,7 +34,7 @@ router.get('/:id', async function (req, res, next) {
     try {
         const id = req.params.id;
         const user = await User.findById(id);
-        res.json({results : user});
+        res.json({result : user});
     } catch(error) {
         next(error)
     }   
