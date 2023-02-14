@@ -20,8 +20,17 @@ router.get('/auth', async function (req, res, next) {
 // GET api/users
 router.get('/', async function (req, res, next) {
     try {
-        const users = await User.getUsers();
-        res.json({results : users});
+        const username = req.query.username;
+
+        if (username) {
+            const user = await  User.findOne({username});
+            if (!user) {
+                next(createError(404, `Username ${username} does not exist`));
+                return;
+            }
+        res.json({results : user});
+        }
+
     } catch(error) {
         next(error)
     }   
