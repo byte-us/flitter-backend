@@ -7,6 +7,9 @@ var logger = require('morgan');
 const passport = require('passport')
 const session = require('express-session')
 const flash = require('connect-flash')
+const fs = require('fs');
+const multer = require('multer');
+const upload = multer({ dest: 'public/images/' })
 
 // connection to the DB
 require('./lib/connectMongoose');
@@ -55,9 +58,16 @@ app.use('/api/posts', postsRouter);
 app.use('/api/reset', resetRouter);
 app.use('/api/users', usersApi);
 app.use('/api/', require ('./routes/api/login'));
+app.use('/upload/', require ('./routes/api/upload'));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
+app.post('/upload', upload.single('image'), (req, res) => {
+  fs.renameSync(req.file.path, req.file.path + '.' + req.file.mimetype.split('/')[1]);
+  res.send('Se ha subido');
+});
 
 
 // catch 404 and forward to error handler
