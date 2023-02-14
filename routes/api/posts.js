@@ -158,5 +158,18 @@ router.put('/:id/kudos', async (req, res, next) => {
     }
 });
 
+//GET api/posts/following
+/* gets the posts of those being followed by the authenticated user */
+router.get('/following', passport.authenticate('jwt', {session: false}));
+router.get('/following', async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+        const following = user.following
+        const posts = await Post.find({user: {$in: following}});
+        res.json(posts)
+    } catch (error) {
+        next(error)
+    }
+})
 
 module.exports = router;
