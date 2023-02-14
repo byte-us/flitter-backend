@@ -30,6 +30,7 @@ router.get('/', async function (req, res, next) {
             }
         res.json({result : user});
         }
+        next()
 
     } catch(error) {
         next(error)
@@ -83,21 +84,23 @@ router.delete('/:id', async (req, res, next) => {
 
 // PUT api/users/:id/follow
 /* follow a user and update lists of "following" and "followers" */
+router.put('/:id/follow', passport.authenticate('jwt', {session: false}));
 router.put('/:id/follow', async (req, res, next) => {
     try {
-        const anotherUser = req.body._id
+        const user = req.user;
+
         // identify the user with the provided id
         const userToFollow = await User.findById(req.params.id);
         // if in this userToFollow's followers' list this id doesn't exist:
-        if (!userToFollow.followers.includes(anotherUser)) {
+        if (!userToFollow.followers.includes(user._id)) {
             await Promise.all([
                 // add to the list of following and follower the corresponding ids
-                User.updateOne({ _id: anotherUser }, { $push: {following: userToFollow._id}}),
-                User.updateOne({ _id: userToFollow._id }, { $push: { followers: anotherUser}})
+                User.updateOne({ _id: user._id }, { $push: {following: userToFollow._id}}),
+                User.updateOne({ _id: userToFollow._id }, { $push: { followers: user._id}})
             ]);
-            res.json({result: "You are now following this user" });
+            res.json({result: `${user.username} is now following ${userToFollow.username}` });
         } else {
-            res.json({ result: "You already follow this user" });
+            res.json({ result: `${user.username} already follows ${userToFollow.username}` });
         }
     } catch (error) {
         next(error);
@@ -106,16 +109,17 @@ router.put('/:id/follow', async (req, res, next) => {
 
 // PUT api/users/:id/unfollow
 /* unfollow a user and update the list of followers and following*/ 
+router.put('/:id/unfollow', passport.authenticate('jwt', {session: false}));
 router.put('/:id/unfollow', async (req, res, next) => {
     try {
-        const anotherUser = req.body._id
+        const user = req.user;
         const userToUnfollow = await User.findById(req.params.id);
-        if (userToUnfollow.followers.includes(anotherUser)) {
+        if (userToUnfollow.followers.includes(user._id)) {
             await Promise.all([
-                User.updateOne({ _id: anotherUser }, {$pull: {following: userToUnfollow._id}}),
-                User.updateOne({ _id: userToUnfollow._id }, {$pull: {followers: anotherUser}})
+                User.updateOne({ _id: user._id }, {$pull: {following: userToUnfollow._id}}),
+                User.updateOne({ _id: userToUnfollow._id }, {$pull: {followers: user._id}})
             ]);
-            res.json({result: "You're no longer following this user"});
+            res.json({result: `${user.username} is no longer following ${userToUnfollow.username}`});
         } else {
             res.json({result: "You don't follow this user"});
         }
