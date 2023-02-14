@@ -28,7 +28,7 @@ router.get('/', async function (req, res, next) {
                 next(createError(404, `Username ${username} does not exist`));
                 return;
             }
-        res.json({results : user});
+        res.json({result : user});
         }
 
     } catch(error) {
