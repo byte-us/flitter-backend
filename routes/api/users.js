@@ -3,6 +3,18 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../../models/User')
+const passport = require("passport");
+
+// GET api/users/auth
+// Gets the authorized user with token
+router.get('/auth', passport.authenticate('jwt', {session: false}));
+router.get('/auth', async function (req, res, next) {
+    try {
+        res.json({results : req.user});
+    } catch(error) {
+        next(error)
+    }
+})
 
 
 // GET api/users
