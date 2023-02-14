@@ -134,21 +134,27 @@ router.put('/:id', async (req, res, next) => {
 
 //PUT api/posts/:id/kudos
 /* give and remove kudos from a post */
+router.put('/:id/kudos', passport.authenticate('jwt', {session: false}));
 router.put('/:id/kudos', async (req, res, next) => {
     try {
-        const userId = await User.findById(req.body._id);
-        const postId = await Post.findById(req.params.id);
+        const user = req.user;
+        const postId = req.params.id;
+        const post = await Post.findById(postId);
+        if (!post) {
+            next(createError(404, `Post ${postId} does not exist`));
+            return;
+        }
 
-        if (!postId.kudos.includes(userId._id)) {
-            await Post.updateOne({ _id: postId._id }, {$push: {kudos: userId._id}});
-            res.json({message: 'You liked this post'})
+        if (!post.kudos.includes(user._id)) {
+            await Post.updateOne({ _id: post._id }, {$push: {kudos: user._id}});
+            res.json({message: `User ${user.username} added kudo to post ${post._id}`});
        
         } else {
-            await Post.updateOne({ _id: postId._id }, {$pull: {kudos: userId._id}})
-            res.json({message: 'Your kudos was removed' })
+            await Post.updateOne({ _id: post._id }, {$pull: {kudos: user._id}});
+            res.json({message: `User ${user.username} removed kudo from post ${post._id}` });
         }
     } catch (error) {
-        next(error)
+        next(error);
     }
 });
 
