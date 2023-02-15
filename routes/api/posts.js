@@ -163,13 +163,38 @@ router.put('/:id/kudos', async (req, res, next) => {
 router.get('/following', passport.authenticate('jwt', {session: false}));
 router.get('/following', async (req, res, next) => {
     try {
-        const user = await User.findById(req.user.id);
-        const following = user.following
-        const posts = await Post.find({user: {$in: following}});
-        res.json(posts)
-    } catch (error) {
-        next(error)
-    }
+        const text = req.query.text;
+        const published = req.query.published;
+        const filter = {};
+        const user = req.user;
+
+        filter.author = user.following;
+
+        if (text) {
+            filter.$text = {$search: text};
+        }
+
+        if (published === "true") {
+            filter.publishedDate = {$lte: new Date()};
+        }
+        if (published === "false") {
+            filter.publishedDate = {$gt: new Date()};
+        }
+
+        // paginación
+        const page = req.query.page || 1;
+        // default number of postr per page 10
+        const limit = req.query.limit || 10;
+        const skip = (page-1)*limit;
+        const sort = req.query.sort || "-publishedDate";
+
+        const posts = await Post.getPosts(filter, sort, skip, limit);
+
+        const totalPosts = await Post.countPosts(filter)
+        res.json({totalPosts, page, limit, result: posts});
+    } catch(err) {
+        next(err);
+    }   
 })
 
 module.exports = router;
