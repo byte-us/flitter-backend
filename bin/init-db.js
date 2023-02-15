@@ -36,7 +36,7 @@ async function initUsers() {
             username: 'ana123',
             email: 'ana@gmail.com',
             password: 'ana123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -45,7 +45,7 @@ async function initUsers() {
             username: 'lola',
             email: 'lola@gmail.com',
             password: 'lola123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -54,7 +54,7 @@ async function initUsers() {
             username: 'maga',
             email: 'maga@gmail.com',
             password: 'maga123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -63,7 +63,7 @@ async function initUsers() {
             username: 'agapita21',
             email: 'agapita21@gmail.com',
             password: 'pita123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -72,7 +72,7 @@ async function initUsers() {
             username: 'florencio14',
             email: 'floren@gmail.com',
             password: 'floren123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -81,7 +81,7 @@ async function initUsers() {
             username: 'luciana33',
             email: 'luci33@gmail.com',
             password: 'luci123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -90,7 +90,7 @@ async function initUsers() {
             username: 'hermenegildo22',
             email: 'herme@gmail.com',
             password: 'herme123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
@@ -99,7 +99,7 @@ async function initUsers() {
             username: 'pepito3',
             email: 'pepi3@gmail.com',
             password: 'pepito123',
-            profileImage: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
+            image: ['https://wallpapers-clan.com/wp-content/uploads/2022/06/cute-pusheen-pfp-1.jpg'],
             followers: [],
             following: [],
             posts: []
