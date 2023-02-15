@@ -56,6 +56,43 @@ router.get('/', async function (req, res, next) {
     }   
 })
 
+// GET api/posts/auth
+router.get('/auth', passport.authenticate('jwt', {session: false}));
+router.get('/auth', async function (req, res, next) {
+    try {
+        const text = req.query.text;
+        const published = req.query.published;
+        const filter = {};
+        const user = req.user;
+
+        filter.author = user.following;
+
+        if (text) {
+            filter.$text = {$search: text};
+        }
+
+        if (published === "true") {
+            filter.publishedDate = {$lte: new Date()};
+        }
+        if (published === "false") {
+            filter.publishedDate = {$gt: new Date()};
+        }
+
+        // paginación
+        const page = req.query.page || 1;
+        // default number of postr per page 10
+        const limit = req.query.limit || 10;
+        const skip = (page-1)*limit;
+        const sort = req.query.sort || "-publishedDate";
+
+        const posts = await Post.getPosts(filter, sort, skip, limit);
+
+        const totalPosts = await Post.countPosts(filter)
+        res.json({totalPosts, page, limit, result: posts});
+    } catch(err) {
+        next(err);
+    }   
+})
 
 // GET api/posts/:id
 /* gets 1 post */
